@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraMind - Explainable AI Alzheimer's Diagnostics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="stars-overlay"></div>
+    <div class="radial-glow glow-1"></div>
+    <div class="radial-glow glow-2"></div>
+
+    <div class="app-container">
+        <!-- HEADER -->
+        <header class="app-header animate-fade-in">
+            <div class="logo-wrapper">
+                <div class="brain-pulse-container">
+                    <svg viewBox="0 0 100 100" class="pulse-brain-icon">
+                        <path d="M50,15 C30,15 18,30 18,48 C18,60 26,72 38,78 L38,88 L50,94 L62,88 L62,78 C74,72 82,60 82,48 C82,30 70,15 50,15 Z" fill="none" stroke="var(--accent-glow)" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M50,15 C60,15 68,22 68,34 C68,42 62,48 50,56 C38,48 32,42 32,34 C32,22 40,15 50,15 Z" fill="none" stroke="var(--accent-color)" stroke-width="3"/>
+                        <circle cx="50" cy="34" r="5" fill="var(--accent-glow)"/>
+                        <line x1="50" y1="56" x2="50" y2="78" stroke="var(--accent-glow)" stroke-width="3"/>
+                    </svg>
+                    <div class="pulse-ring"></div>
+                </div>
+                <div class="title-meta">
+                    <h1>AuraMind <span class="badge">XAI V1.0</span></h1>
+                    <p>Explainable AI Alzheimer's Diagnostics & Biomarker Analysis</p>
+                </div>
+            </div>
+
+            <!-- PRESETS CONTROLLER -->
+            <div class="presets-container">
+                <span class="preset-label">Load Diagnostic Presets:</span>
+                <div class="preset-buttons">
+                    <button class="btn-preset active" data-preset="healthy" id="btn-preset-healthy">
+                        <span class="dot healthy-dot"></span> Cognitively Normal
+                    </button>
+                    <button class="btn-preset" data-preset="mci" id="btn-preset-mci">
+                        <span class="dot mci-dot"></span> Mild Cognitive (MCI)
+                    </button>
+                    <button class="btn-preset" data-preset="ad" id="btn-preset-ad">
+                        <span class="dot ad-dot"></span> Alzheimer's (AD)
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="grid-layout">
+            <!-- INPUTS PANEL -->
+            <section class="card glassmorphism inputs-panel animate-slide-left">
+                <div class="card-header">
+                    <h2><span class="icon-span">🧪</span> Patient Biomarkers & Cognitive Profiles</h2>
+                    <p>Adjust variables below to calculate diagnostic probability and feature contributions.</p>
+                </div>
+
+                <form id="biomarker-form" onsubmit="event.preventDefault();">
+                    <!-- SECTION: COGNITIVE SCORES -->
+                    <div class="form-group-section">
+                        <h3>Cognitive Tests</h3>
+                        
+                        <!-- MMSE -->
+                        <div class="input-control">
+                            <div class="input-label-row">
+                                <label for="mmse">Mini-Mental State Exam (MMSE)</label>
+                                <div class="value-display-group">
+                                    <input type="number" id="mmse-num" min="5" max="30" step="1" class="value-number">
+                                    <span class="unit">pts</span>
+                                </div>
+                            </div>
+                            <input type="range" id="mmse" min="5" max="30" step="1" class="custom-slider">
+                            <div class="range-bounds"><span>5 (Severe)</span><span>30 (Normal)</span></div>
+                        </div>
+
+                        <!-- MOCA -->
+                        <div class="input-control">
+                            <div class="input-label-row">
+                                <label for="moca">Montreal Cognitive Assessment (MoCA)</label>
+                                <div class="value-display-group">
+                                    <input type="number" id="moca-num" min="0" max="30" step="1" class="value-number">
+                                    <span class="unit">pts</span>
+                                </div>
+                            </div>
+                            <input type="range" id="moca" min="0" max="30" step="1" class="custom-slider">
+                            <div class="range-bounds"><span>0 (Severe)</span><span>30 (Normal)</span></div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION: CORE FLUID BIOMARKERS -->
+                    <div class="form-group-section">
+                        <h3>Blood & Plasma Biomarkers</h3>
+                        
+                        <!-- p-tau181 -->
+                        <div class="input-control">
+                            <div class="input-label-row">
+                                <label for="ptau181_pgml">Phosphorylated Tau 181 (p-tau181)</label>
+                                <div class="value-display-group">
+                                    <input type="number" id="ptau181_pgml-num" min="0.5" max="9.5" step="0.1" class="value-number">
+                                    <span class="unit">pg/mL</span>
+                                </div>
+                            </div>
+                            <input type="range" id="ptau181_pgml" min="0.5" max="9.5" step="0.1" class="custom-slider">
+                            <div class="range-bounds"><span>0.5 pg/mL</span><span>9.5 pg/mL</span></div>
+                        </div>
+
+                        <!-- p-tau217 -->
+                        <div class="input-control">
+                            <div class="input-label-row">
+                                <label for="ptau217_pgml">Phosphorylated Tau 217 (p-tau217)</label>
+                                <div class="value-display-group">
+                                    <input type="number" id="ptau217_pgml-num" min="0.05" max="1.35" step="0.01" class="value-number">
+                                    <span class="unit">pg/mL</span>
+                                </div>
+                            </div>
+                            <input type="range" id="ptau217_pgml" min="0.05" max="1.35" step="0.01" class="custom-slider">
+                            <div class="range-bounds"><span>0.05 pg/mL</span><span>1.35 pg/mL</span></div>
+                        </div>
+
+                        <!-- ab42_ab40_ratio -->
+                        <div class="input-control">
+                            <div class="input-label-row">
+                                <label for="ab42_ab40_ratio">Amyloid Beta 42/40 Ratio (Aβ42/Aβ40)</label>
+                                <div class="value-display-group">
+                                    <input type="number" id="ab42_ab40_ratio-num" min="0.017" max="0.160" step="0.001" class="value-number">
+                                    <span class="unit">ratio</span>
+                                </div>
+                            </div>
+                            <input type="range" id="ab42_ab40_ratio" min="0.017" max="0.160" step="0.001" class="custom-slider">
+                            <div class="range-bounds"><span>0.017 (High Amyloid)</span><span>0.160 (Normal)</span></div>
+                        </div>
+
+                        <!-- nfl_pgml -->
+                        <div class="input-control">
+                            <div class="input-label-row">
+                                <label for="nfl_pgml">Neurofilament Light (NfL)</label>
+                                <div class="value-display-group">
+                                    <input type="number" id="nfl_pgml-num" min="4.0" max="82.0" step="0.1" class="value-number">
+                                    <span class="unit">pg/mL</span>
+                                </div>
+                            </div>
+                            <input type="range" id="nfl_pgml" min="4.0" max="82.0" step="0.1" class="custom-slider">
+                            <div class="range-bounds"><span>4.0 pg/mL</span><span>82.0 pg/mL</span></div>
+                        </div>
+
+                        <!-- gfap_pgml -->
+                        <div class="input-control">
+                            <div class="input-label-row">
+                                <label for="gfap_pgml">Glial Fibrillary Acidic Protein (GFAP)</label>
+                                <div class="value-display-group">
+                                    <input type="number" id="gfap_pgml-num" min="40" max="535" step="1" class="value-number">
+                                    <span class="unit">pg/mL</span>
+                                </div>
+                            </div>
+                            <input type="range" id="gfap_pgml" min="40" max="535" step="1" class="custom-slider">
+                            <div class="range-bounds"><span>40 pg/mL</span><span>535 pg/mL</span></div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION: DEMOGRAPHICS -->
+                    <div class="form-group-section">
+                        <h3>Demographics</h3>
+                        
+                        <!-- AGE -->
+                        <div class="input-control">
+                            <div class="input-label-row">
+                                <label for="age">Patient Age</label>
+                                <div class="value-display-group">
+                                    <input type="number" id="age-num" min="50" max="95" step="1" class="value-number">
+                                    <span class="unit">yrs</span>
+                                </div>
+                            </div>
+                            <input type="range" id="age" min="50" max="95" step="1" class="custom-slider">
+                            <div class="range-bounds"><span>50 yrs</span><span>95 yrs</span></div>
+                        </div>
+                    </div>
+                </form>
+            </section>
+
+            <!-- RESULTS & XAI PANEL -->
+            <section class="right-column-container">
+                <!-- DIAGNOSTIC PROCESSING PROGRESS BAR (USER REQUESTED) -->
+                <div class="card glassmorphism processing-card animate-fade-in" id="processing-card">
+                    <div class="loader-header">
+                        <span class="loader-indicator-spinner"></span>
+                        <div class="loader-meta">
+                            <h4>Analyzing Biomarker Matrix...</h4>
+                            <p id="processing-step">Initializing neural scaling tensors...</p>
+                        </div>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-bar-fill" id="diagnostic-progress-bar"></div>
+                    </div>
+                </div>
+
+                <!-- MAIN DIAGNOSIS DISPLAY -->
+                <div class="card glassmorphism results-card animate-slide-right opacity-low" id="results-card">
+                    <div class="card-header">
+                        <h2><span class="icon-span">🧠</span> Diagnostic Classification</h2>
+                        <p>Computed live by multinomial diagnostic probabilities.</p>
+                    </div>
+
+                    <div class="diagnosis-grid-display">
+                        <!-- Prob Dial -->
+                        <div class="radial-gauge-container">
+                            <svg viewBox="0 0 120 120" class="radial-gauge-svg">
+                                <circle class="gauge-bg" cx="60" cy="60" r="50"></circle>
+                                <circle class="gauge-fill" id="gauge-fill-circle" cx="60" cy="60" r="50"></circle>
+                            </svg>
+                            <div class="gauge-center-text">
+                                <span class="prob-percentage" id="main-percentage">--%</span>
+                                <span class="prob-label">Confidence</span>
+                            </div>
+                        </div>
+
+                        <!-- Class probability bars -->
+                        <div class="class-breakdown-details">
+                            <div class="class-summary">
+                                <h3 id="class-title-primary">Evaluating...</h3>
+                                <p id="class-badge-description">Calculating patient profile classification.</p>
+                            </div>
+                            
+                            <div class="prob-bar-row">
+                                <div class="prob-bar-label-group"><span>Cognitively Normal</span><span id="prob-cn-text">0%</span></div>
+                                <div class="prob-bar-track"><div class="prob-bar-fill cn-color-bar" id="prob-cn-fill"></div></div>
+                            </div>
+                            <div class="prob-bar-row">
+                                <div class="prob-bar-label-group"><span>Mild Cognitive (MCI)</span><span id="prob-mci-text">0%</span></div>
+                                <div class="prob-bar-track"><div class="prob-bar-fill mci-color-bar" id="prob-mci-fill"></div></div>
+                            </div>
+                            <div class="prob-bar-row">
+                                <div class="prob-bar-label-group"><span>Alzheimer's (AD)</span><span id="prob-ad-text">0%</span></div>
+                                <div class="prob-bar-track"><div class="prob-bar-fill ad-color-bar" id="prob-ad-fill"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EXPLAINABLE AI: FEATURE CONTRIBUTIONS (SHAP-STYLE) -->
+                <div class="card glassmorphism xai-card animate-slide-right opacity-low" id="xai-card">
+                    <div class="card-header">
+                        <h2><span class="icon-span">📊</span> XAI Feature Attribution (SHAP-style)</h2>
+                        <p>Shows how much each biomarker pushed the classification towards Cognitive Normal (left, green) or Risk/AD (right, red) compared to average population values.</p>
+                    </div>
+
+                    <!-- Live XAI Chart Container -->
+                    <div class="xai-chart-wrapper" id="xai-bars-container">
+                        <!-- Generated by JS -->
+                    </div>
+                </div>
+
+                <!-- CLINICAL INSIGHTS CARD -->
+                <div class="card glassmorphism insights-card animate-slide-right opacity-low" id="insights-card">
+                    <div class="card-header">
+                        <h2><span class="icon-span">🩺</span> Diagnostic Insights</h2>
+                    </div>
+                    <div class="insights-content" id="insights-text-container">
+                        Loading clinical interpretation profile...
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer animate-fade-in">
+            <p>Developed with AuraMind Glassmorphic Design Core. Real-time predictions map coefficients extracted from local standard classifiers. All metrics computed local-first.</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
