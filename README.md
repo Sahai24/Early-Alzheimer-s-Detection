@@ -20,10 +20,12 @@ An [XGBoost](https://xgboost.readthedocs.io/) classifier is trained on a 10,000-
 Early-Alzheimer-s-Detection/
 ├── alzheimers_synthetic_10k.csv   # 10,000-patient synthetic dataset (51 columns)
 ├── main.ipynb                     # Data validation, EDA, model training & evaluation
+├── server.py                      # Flask backend API serving static files and DB endpoints
+├── database.db                    # SQLite database containing diagnostic logs
 ├── frontend/
 │   ├── index.html                 # AuraMind UI — biomarker input & diagnosis panels
 │   ├── styles.css                 # Styling
-│   └── app.js                     # Client-side prediction + SHAP-style explanation logic
+│   └── app.js                     # Client-side prediction & dynamic DB logs interaction
 └── .gitignore
 ```
 
@@ -50,14 +52,14 @@ Early-Alzheimer-s-Detection/
 
 ## AuraMind — Interactive Demo UI
 
-`frontend/` contains a dependency-free HTML/CSS/JS interface that lets you:
+`frontend/` contains a modern, glassmorphic UI integrated with a local database backend:
 
-- Adjust biomarker, demographic, and cognitive-score inputs
-- Load quick presets for **Cognitively Normal**, **MCI**, and **Alzheimer's** profiles
-- View the predicted class and per-class probabilities
-- View a ranked, SHAP-style bar chart of the top contributing features
+- **Interactive Console & Live Logging**: Adjust inputs and submit assessments directly to the logs from the main dashboard Console page via a dedicated button.
+- **Analytical Insights**: Review a visual pipeline flowchart, radar baseline comparisons, population clustering mappings, and dynamic text-based clinical interpretations moved to the top of the **Analytical Flow & Dashboard** tab.
+- **Persistent Log Registry**: View diagnostic runs persistently stored in the backend SQLite database. Includes columns for all 8 biomarker features (specifically including `p-tau181`) with clear/export CSV functionality.
+- **Medical Disclaimer**: Integrated safety consult notifications within precautions to maintain clinical support standards.
 
-> Note: the front end currently **simulates** inference client-side in JavaScript rather than calling the trained XGBoost model from `main.ipynb` through a live API — see Future Work.
+> Note: the front end currently **simulates** inference client-side in JavaScript using logistic coefficients mapped from the XGBoost model, storing logs persistently in SQLite.
 
 ## Getting Started
 
@@ -72,18 +74,23 @@ Run the notebook top to bottom to reproduce data validation, training, evaluatio
 
 ### 2. Run the AuraMind demo UI
 
-No build step required — just open it in a browser:
+Start the Flask server which hosts the frontend and connects to the SQLite database:
 
 ```bash
-cd frontend
-python3 -m http.server 8000
-# then visit http://localhost:8000
+# Install dependencies
+pip install Flask
+
+# Run Flask backend server
+python server.py
+
+# then visit http://localhost:8000 in your browser
 ```
 
 ## Tech Stack
 
 - **Modelling:** Python, pandas, NumPy, scikit-learn, XGBoost, Matplotlib/Seaborn
-- **Frontend:** HTML5, CSS3, vanilla JavaScript (no framework)
+- **Backend & Database:** Flask, SQLite
+- **Frontend:** HTML5, CSS3, vanilla JavaScript, Chart.js
 
 ## Future Work
 
