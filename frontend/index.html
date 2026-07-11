@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <!-- Chart.js CDN for Analytical Visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="stars-overlay"></div>
@@ -50,135 +52,140 @@
             </div>
         </header>
 
-        <main class="grid-layout">
-            <!-- INPUTS PANEL -->
-            <section class="card glassmorphism inputs-panel animate-slide-left">
-                <div class="card-header">
-                    <h2><span class="icon-span">🧪</span> Patient Biomarkers & Cognitive Profiles</h2>
-                    <p>Adjust variables below to calculate diagnostic probability and feature contributions.</p>
-                </div>
+        <!-- TAB NAVIGATION -->
+        <nav class="app-tabs animate-fade-in">
+            <button class="tab-btn active" data-tab="console">🔮 Diagnostic Console</button>
+            <button class="tab-btn" data-tab="dashboard">📊 Analytical Flow & Dashboard</button>
+            <button class="tab-btn" data-tab="logs">📋 Log Registry</button>
+            <button class="tab-btn" data-tab="glossary">📖 Clinical Reference & FAQ</button>
+        </nav>
 
-                <form id="biomarker-form" onsubmit="event.preventDefault();">
-                    <!-- SECTION: COGNITIVE SCORES -->
-                    <div class="form-group-section">
-                        <h3>Cognitive Tests</h3>
-                        
-                        <!-- MMSE -->
-                        <div class="input-control">
-                            <div class="input-label-row">
-                                <label for="mmse">Mini-Mental State Exam (MMSE)</label>
-                                <div class="value-display-group">
-                                    <input type="number" id="mmse-num" min="5" max="30" step="1" class="value-number">
-                                    <span class="unit">pts</span>
-                                </div>
-                            </div>
-                            <input type="range" id="mmse" min="5" max="30" step="1" class="custom-slider">
-                            <div class="range-bounds"><span>5 (Severe)</span><span>30 (Normal)</span></div>
-                        </div>
-
-                        <!-- MOCA -->
-                        <div class="input-control">
-                            <div class="input-label-row">
-                                <label for="moca">Montreal Cognitive Assessment (MoCA)</label>
-                                <div class="value-display-group">
-                                    <input type="number" id="moca-num" min="0" max="30" step="1" class="value-number">
-                                    <span class="unit">pts</span>
-                                </div>
-                            </div>
-                            <input type="range" id="moca" min="0" max="30" step="1" class="custom-slider">
-                            <div class="range-bounds"><span>0 (Severe)</span><span>30 (Normal)</span></div>
-                        </div>
+        <!-- TAB PANEL: DIAGNOSTIC CONSOLE -->
+        <div id="tab-console" class="tab-panel active">
+            <main class="grid-layout">
+                <!-- INPUTS PANEL -->
+                <section class="card glassmorphism inputs-panel animate-slide-left">
+                    <div class="card-header">
+                        <h2><span class="icon-span">🧪</span> Patient Biomarkers & Cognitive Profiles</h2>
+                        <p>Adjust variables below to calculate diagnostic probability and feature contributions.</p>
                     </div>
 
-                    <!-- SECTION: CORE FLUID BIOMARKERS -->
-                    <div class="form-group-section">
-                        <h3>Blood & Plasma Biomarkers</h3>
-                        
-                        <!-- p-tau181 -->
-                        <div class="input-control">
-                            <div class="input-label-row">
-                                <label for="ptau181_pgml">Phosphorylated Tau 181 (p-tau181)</label>
-                                <div class="value-display-group">
-                                    <input type="number" id="ptau181_pgml-num" min="0.5" max="9.5" step="0.1" class="value-number">
-                                    <span class="unit">pg/mL</span>
+                    <form id="biomarker-form" onsubmit="event.preventDefault();">
+                        <!-- SECTION: DEMOGRAPHICS & COGNITIVE SCORES -->
+                        <div class="form-group-section">
+                            <h3>Demographics & Cognitive Tests</h3>
+                            
+                            <!-- AGE -->
+                            <div class="input-control">
+                                <div class="input-label-row">
+                                    <label for="age">Patient Age</label>
+                                    <div class="value-display-group">
+                                        <input type="number" id="age-num" min="50" max="95" step="1" class="value-number">
+                                        <span class="unit">yrs</span>
+                                    </div>
                                 </div>
+                                <input type="range" id="age" min="50" max="95" step="1" class="custom-slider">
+                                <div class="range-bounds"><span>50 yrs</span><span>95 yrs</span></div>
                             </div>
-                            <input type="range" id="ptau181_pgml" min="0.5" max="9.5" step="0.1" class="custom-slider">
-                            <div class="range-bounds"><span>0.5 pg/mL</span><span>9.5 pg/mL</span></div>
+
+                            <!-- MMSE -->
+                            <div class="input-control">
+                                <div class="input-label-row">
+                                    <label for="mmse">Mini-Mental State Exam (MMSE)</label>
+                                    <div class="value-display-group">
+                                        <input type="number" id="mmse-num" min="5" max="30" step="1" class="value-number">
+                                        <span class="unit">pts</span>
+                                    </div>
+                                </div>
+                                <input type="range" id="mmse" min="5" max="30" step="1" class="custom-slider">
+                                <div class="range-bounds"><span>5 (Severe)</span><span>30 (Normal)</span></div>
+                            </div>
+
+                            <!-- MOCA -->
+                            <div class="input-control">
+                                <div class="input-label-row">
+                                    <label for="moca">Montreal Cognitive Assessment (MoCA)</label>
+                                    <div class="value-display-group">
+                                        <input type="number" id="moca-num" min="0" max="30" step="1" class="value-number">
+                                        <span class="unit">pts</span>
+                                    </div>
+                                </div>
+                                <input type="range" id="moca" min="0" max="30" step="1" class="custom-slider">
+                                <div class="range-bounds"><span>0 (Severe)</span><span>30 (Normal)</span></div>
+                            </div>
                         </div>
 
-                        <!-- p-tau217 -->
-                        <div class="input-control">
-                            <div class="input-label-row">
-                                <label for="ptau217_pgml">Phosphorylated Tau 217 (p-tau217)</label>
-                                <div class="value-display-group">
-                                    <input type="number" id="ptau217_pgml-num" min="0.05" max="1.35" step="0.01" class="value-number">
-                                    <span class="unit">pg/mL</span>
+                        <!-- SECTION: CORE FLUID BIOMARKERS -->
+                        <div class="form-group-section">
+                            <h3>Blood & Plasma Biomarkers</h3>
+                            
+                            <!-- p-tau181 -->
+                            <div class="input-control">
+                                <div class="input-label-row">
+                                    <label for="ptau181_pgml">Phosphorylated Tau 181 (p-tau181)</label>
+                                    <div class="value-display-group">
+                                        <input type="number" id="ptau181_pgml-num" min="0.5" max="9.5" step="0.1" class="value-number">
+                                        <span class="unit">pg/mL</span>
+                                    </div>
                                 </div>
+                                <input type="range" id="ptau181_pgml" min="0.5" max="9.5" step="0.1" class="custom-slider">
+                                <div class="range-bounds"><span>0.5 pg/mL</span><span>9.5 pg/mL</span></div>
                             </div>
-                            <input type="range" id="ptau217_pgml" min="0.05" max="1.35" step="0.01" class="custom-slider">
-                            <div class="range-bounds"><span>0.05 pg/mL</span><span>1.35 pg/mL</span></div>
-                        </div>
 
-                        <!-- ab42_ab40_ratio -->
-                        <div class="input-control">
-                            <div class="input-label-row">
-                                <label for="ab42_ab40_ratio">Amyloid Beta 42/40 Ratio (Aβ42/Aβ40)</label>
-                                <div class="value-display-group">
-                                    <input type="number" id="ab42_ab40_ratio-num" min="0.017" max="0.160" step="0.001" class="value-number">
-                                    <span class="unit">ratio</span>
+                            <!-- p-tau217 -->
+                            <div class="input-control">
+                                <div class="input-label-row">
+                                    <label for="ptau217_pgml">Phosphorylated Tau 217 (p-tau217)</label>
+                                    <div class="value-display-group">
+                                        <input type="number" id="ptau217_pgml-num" min="0.05" max="1.35" step="0.01" class="value-number">
+                                        <span class="unit">pg/mL</span>
+                                    </div>
                                 </div>
+                                <input type="range" id="ptau217_pgml" min="0.05" max="1.35" step="0.01" class="custom-slider">
+                                <div class="range-bounds"><span>0.05 pg/mL</span><span>1.35 pg/mL</span></div>
                             </div>
-                            <input type="range" id="ab42_ab40_ratio" min="0.017" max="0.160" step="0.001" class="custom-slider">
-                            <div class="range-bounds"><span>0.017 (High Amyloid)</span><span>0.160 (Normal)</span></div>
-                        </div>
 
-                        <!-- nfl_pgml -->
-                        <div class="input-control">
-                            <div class="input-label-row">
-                                <label for="nfl_pgml">Neurofilament Light (NfL)</label>
-                                <div class="value-display-group">
-                                    <input type="number" id="nfl_pgml-num" min="4.0" max="82.0" step="0.1" class="value-number">
-                                    <span class="unit">pg/mL</span>
+                            <!-- ab42_ab40_ratio -->
+                            <div class="input-control">
+                                <div class="input-label-row">
+                                    <label for="ab42_ab40_ratio">Amyloid Beta 42/40 Ratio (Aβ42/Aβ40)</label>
+                                    <div class="value-display-group">
+                                        <input type="number" id="ab42_ab40_ratio-num" min="0.017" max="0.160" step="0.001" class="value-number">
+                                        <span class="unit">ratio</span>
+                                    </div>
                                 </div>
+                                <input type="range" id="ab42_ab40_ratio" min="0.017" max="0.160" step="0.001" class="custom-slider">
+                                <div class="range-bounds"><span>0.017 (High Amyloid)</span><span>0.160 (Normal)</span></div>
                             </div>
-                            <input type="range" id="nfl_pgml" min="4.0" max="82.0" step="0.1" class="custom-slider">
-                            <div class="range-bounds"><span>4.0 pg/mL</span><span>82.0 pg/mL</span></div>
-                        </div>
 
-                        <!-- gfap_pgml -->
-                        <div class="input-control">
-                            <div class="input-label-row">
-                                <label for="gfap_pgml">Glial Fibrillary Acidic Protein (GFAP)</label>
-                                <div class="value-display-group">
-                                    <input type="number" id="gfap_pgml-num" min="40" max="535" step="1" class="value-number">
-                                    <span class="unit">pg/mL</span>
+                            <!-- nfl_pgml -->
+                            <div class="input-control">
+                                <div class="input-label-row">
+                                    <label for="nfl_pgml">Neurofilament Light (NfL)</label>
+                                    <div class="value-display-group">
+                                        <input type="number" id="nfl_pgml-num" min="4.0" max="82.0" step="0.1" class="value-number">
+                                        <span class="unit">pg/mL</span>
+                                    </div>
                                 </div>
+                                <input type="range" id="nfl_pgml" min="4.0" max="82.0" step="0.1" class="custom-slider">
+                                <div class="range-bounds"><span>4.0 pg/mL</span><span>82.0 pg/mL</span></div>
                             </div>
-                            <input type="range" id="gfap_pgml" min="40" max="535" step="1" class="custom-slider">
-                            <div class="range-bounds"><span>40 pg/mL</span><span>535 pg/mL</span></div>
-                        </div>
-                    </div>
 
-                    <!-- SECTION: DEMOGRAPHICS -->
-                    <div class="form-group-section">
-                        <h3>Demographics</h3>
-                        
-                        <!-- AGE -->
-                        <div class="input-control">
-                            <div class="input-label-row">
-                                <label for="age">Patient Age</label>
-                                <div class="value-display-group">
-                                    <input type="number" id="age-num" min="50" max="95" step="1" class="value-number">
-                                    <span class="unit">yrs</span>
+                            <!-- gfap_pgml -->
+                            <div class="input-control">
+                                <div class="input-label-row">
+                                    <label for="gfap_pgml">Glial Fibrillary Acidic Protein (GFAP)</label>
+                                    <div class="value-display-group">
+                                        <input type="number" id="gfap_pgml-num" min="40" max="535" step="1" class="value-number">
+                                        <span class="unit">pg/mL</span>
+                                    </div>
                                 </div>
+                                <input type="range" id="gfap_pgml" min="40" max="535" step="1" class="custom-slider">
+                                <div class="range-bounds"><span>40 pg/mL</span><span>535 pg/mL</span></div>
                             </div>
-                            <input type="range" id="age" min="50" max="95" step="1" class="custom-slider">
-                            <div class="range-bounds"><span>50 yrs</span><span>95 yrs</span></div>
                         </div>
-                    </div>
-                </form>
-            </section>
+                    </form>
+                </section>
 
             <!-- RESULTS & XAI PANEL -->
             <section class="right-column-container">
@@ -237,6 +244,24 @@
                             </div>
                         </div>
                     </div>
+                    <!-- SENSITIVITY THRESHOLD CONTROL -->
+                    <div class="threshold-container">
+                        <div class="threshold-header">
+                            <label for="risk-threshold">Risk Flagging Sensitivity Threshold</label>
+                            <span id="threshold-val">50%</span>
+                        </div>
+                        <input type="range" id="risk-threshold" min="10" max="90" step="5" value="50" class="custom-slider threshold-slider">
+                        <div class="threshold-info">
+                            <span>◀ Left (Lower %): More Sensitive (early alert)</span>
+                            <span>Right (Higher %): More Conservative Diagnosis ▶</span>
+                        </div>
+                    </div>
+                    <!-- CONSOLE LOG ACTION (USER REQUESTED) -->
+                    <div class="console-actions" style="margin-top: 1.5rem; display: flex; justify-content: center; width: 100%;">
+                        <button class="btn-preset active" id="btn-save-log-console" style="width: 100%; padding: 0.8rem; justify-content: center; font-size: 0.9rem; font-weight: 600; border-radius: 12px; transition: transform 0.2s ease;">
+                            📋 Submit Assessment to Logs
+                        </button>
+                    </div>
                 </div>
 
                 <!-- EXPLAINABLE AI: FEATURE CONTRIBUTIONS (SHAP-STYLE) -->
@@ -251,18 +276,274 @@
                         <!-- Generated by JS -->
                     </div>
                 </div>
-
-                <!-- CLINICAL INSIGHTS CARD -->
-                <div class="card glassmorphism insights-card animate-slide-right opacity-low" id="insights-card">
-                    <div class="card-header">
-                        <h2><span class="icon-span">🩺</span> Diagnostic Insights</h2>
-                    </div>
-                    <div class="insights-content" id="insights-text-container">
-                        Loading clinical interpretation profile...
-                    </div>
-                </div>
             </section>
         </main>
+        </div> <!-- Close #tab-console -->
+
+        <!-- TAB PANEL: ANALYTICAL FLOW & DASHBOARD -->
+        <div id="tab-dashboard" class="tab-panel">
+            <!-- CLINICAL INSIGHTS CARD (MOVED FROM CONSOLE TAB) -->
+            <div class="card glassmorphism insights-card animate-fade-in opacity-low" id="insights-card" style="margin-bottom: 2rem;">
+                <div class="card-header">
+                    <h2><span class="icon-span">🩺</span> Diagnostic Insights & Clinical Interpretation</h2>
+                </div>
+                <div class="insights-content" id="insights-text-container">
+                    Loading clinical interpretation profile...
+                </div>
+            </div>
+
+            <!-- PIPELINE FLOW DIAGRAM -->
+            <div class="card glassmorphism flow-card animate-fade-in">
+                <div class="card-header">
+                    <h2><span class="icon-span">🔄</span> Diagnostic Decision Pipeline Flow</h2>
+                    <p>How entered patient biomarkers translate into an explainable diagnosis.</p>
+                </div>
+                <div class="flowchart-container">
+                    <div class="flowchart-step">
+                        <div class="step-num">1</div>
+                        <h4>Input Profile</h4>
+                        <p>Ingest patient demographic & biomarker values.</p>
+                    </div>
+                    <div class="flowchart-arrow">➔</div>
+                    <div class="flowchart-step">
+                        <div class="step-num">2</div>
+                        <h4>Standard Scaling</h4>
+                        <p>Compare inputs to healthy/AD reference averages.</p>
+                    </div>
+                    <div class="flowchart-arrow">➔</div>
+                    <div class="flowchart-step">
+                        <div class="step-num">3</div>
+                        <h4>Softmax Prob</h4>
+                        <p>Compute per-class probabilities with Logistic Regression.</p>
+                    </div>
+                    <div class="flowchart-arrow">➔</div>
+                    <div class="flowchart-step">
+                        <div class="step-num">4</div>
+                        <h4>Threshold Guard</h4>
+                        <p>Apply risk sensitivity cutoffs to determine classification.</p>
+                    </div>
+                    <div class="flowchart-arrow">➔</div>
+                    <div class="flowchart-step">
+                        <div class="step-num">5</div>
+                        <h4>SHAP & Insights</h4>
+                        <p>Render attribution values & clinical precautions.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DASHBOARD GRID -->
+            <div class="dashboard-grid">
+                <div class="card glassmorphism chart-card animate-slide-left">
+                    <div class="card-header">
+                        <h3><span class="icon-span">🕸️</span> Patient Biomarker Radar</h3>
+                        <p>Current patient levels (normalized) plotted against average clinical group baselines.</p>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card glassmorphism chart-card animate-slide-right">
+                    <div class="card-header">
+                        <h3><span class="icon-span">🎯</span> Patient Population Mapping</h3>
+                        <p>Biomarker profile coordinate (p-tau217 vs Aβ42/Aβ40) plotted against synthetic clinical clusters.</p>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="scatterChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card glassmorphism chart-card animate-slide-left full-width-chart">
+                    <div class="card-header">
+                        <h3><span class="icon-span">📈</span> Model Performance & Feature Significance</h3>
+                        <p>XGBoost performance metrics trained on the 10,000-patient dataset.</p>
+                    </div>
+                    <div class="metrics-dashboard-row">
+                        <div class="metric-box">
+                            <span class="metric-val">99.85%</span>
+                            <span class="metric-lbl">Test Accuracy</span>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-val">~1.00</span>
+                            <span class="metric-lbl">Precision / Recall</span>
+                        </div>
+                        <div class="confusion-matrix-wrapper">
+                            <h4>Confusion Matrix</h4>
+                            <table class="confusion-table">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Pred CN</th>
+                                        <th>Pred MCI</th>
+                                        <th>Pred AD</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th>Actual CN</th>
+                                        <td class="match-cell">673</td>
+                                        <td>2</td>
+                                        <td>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Actual MCI</th>
+                                        <td>1</td>
+                                        <td class="match-cell">631</td>
+                                        <td>0</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Actual AD</th>
+                                        <td>0</td>
+                                        <td>0</td>
+                                        <td class="match-cell">693</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="chart-container importance-container">
+                            <canvas id="importanceChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="insights-highlight-box warning-box" style="margin-top: 1rem; border-left-color: var(--ad-color);">
+                        <strong>⚠️ Target Leakage Note:</strong> The high classification accuracy (99.85%) is heavily driven by the inclusion of clinical cognitive assessment scores (specifically CDR, MoCA, MMSE). In actual blood-only clinical screening, removing these features is recommended for an unbiased diagnostic assessment.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB PANEL: LOG REGISTRY -->
+        <div id="tab-logs" class="tab-panel">
+            <div class="card glassmorphism log-card animate-fade-in">
+                <div class="card-header logs-header">
+                    <div>
+                        <h2><span class="icon-span">📋</span> Diagnostic Assessment Registry</h2>
+                        <p>Review and export screens conducted during this session. Logs are saved locally in the browser.</p>
+                    </div>
+                    <div class="log-actions">
+                        <button class="btn-preset active" id="btn-save-log">💾 Save Diagnostic Run</button>
+                        <button class="btn-preset text-red" id="btn-clear-logs">🗑️ Clear History</button>
+                        <button class="btn-preset text-accent" id="btn-export-csv">📥 Export to CSV</button>
+                    </div>
+                </div>
+                <div class="log-table-container">
+                    <table class="log-table" id="log-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Age</th>
+                                <th>MMSE</th>
+                                <th>MoCA</th>
+                                <th>p-tau181</th>
+                                <th>p-tau217</th>
+                                <th>Aβ42/40</th>
+                                <th>NfL</th>
+                                <th>GFAP</th>
+                                <th>Threshold</th>
+                                <th>Diagnosis</th>
+                                <th>Confidence</th>
+                            </tr>
+                        </thead>
+                        <tbody id="log-table-body">
+                            <!-- Logs will be inserted here dynamically -->
+                            <tr id="no-logs-row"><td colspan="12" class="text-center">No assessments saved. Perform a test and click "Save Diagnostic Run" to log it.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB PANEL: CLINICAL GLOSSARY & FAQ -->
+        <div id="tab-glossary" class="tab-panel">
+            <!-- DEMOGRAPHICS VS BIOMARKERS FAQ -->
+            <div class="card glassmorphism animate-slide-left">
+                <div class="card-header">
+                    <h2><span class="icon-span">❓</span> Clinical FAQs: Age, Gender & Biomarkers</h2>
+                </div>
+                <div class="faq-content">
+                    <div class="faq-item">
+                        <h3>Is Alzheimer's Disease only age or gender determined?</h3>
+                        <p><strong>No, Alzheimer's is a complex multifactorial disease.</strong> While advanced age is the strongest non-genetic risk factor and statistics show a higher prevalence of Alzheimer's in women, these factors are not sole determinants:</p>
+                        <ul>
+                            <li><strong>Age vs. Pathology:</strong> Cognitive decline and dementia are not normal parts of aging. Biomarkers show pathognomonic patterns (amyloid plaques and tau neurofibrillary tangles) which reflect underlying disease pathophysiology, not merely biological age.</li>
+                            <li><strong>Gender Influences:</strong> The higher prevalence in women is partly because women live longer on average. Additionally, researchers study biological factors such as estrogen depletion post-menopause, lifestyle differences, and genetics. However, both men and women show matching diagnostic biomarker indicators when pathology is active.</li>
+                            <li><strong>Biomarkers as Objective Evidence:</strong> Core fluid biomarkers like <strong>p-tau217</strong>, <strong>Aβ42/40 ratio</strong>, <strong>NfL</strong>, and <strong>GFAP</strong> are critical. They change up to 20 years before symptoms emerge, allowing for definitive screening independent of demographics.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PRECAUTIONS FOR MILD CASES -->
+            <div class="card glassmorphism animate-slide-right" style="margin-top: 2rem;">
+                <div class="card-header">
+                    <h2><span class="icon-span">🛡️</span> Precautions & Interventions for Mild Cognitive Impairment (MCI)</h2>
+                    <p>Practical protocols for managing patients in the early stages of cognitive depletion.</p>
+                </div>
+                <div class="precautions-grid">
+                    <div class="precaution-box">
+                        <h4>🧠 Cognitive Engagement</h4>
+                        <p>Engage in active learning, crossword puzzles, playing musical instruments, or learning new languages. Social connections are also critical to preserve cognitive reserve.</p>
+                    </div>
+                    <div class="precaution-box">
+                        <h4>🏃‍♂️ Physical Activity</h4>
+                        <p>Incorporate regular aerobic exercises (e.g., brisk walking, swimming) for at least 150 minutes per week. Exercise boosts <strong>BDNF</strong>, which supports neuroplasticity and neuronal survival.</p>
+                    </div>
+                    <div class="precaution-box">
+                        <h4>🥗 Nutritional Therapy</h4>
+                        <p>Follow the <strong>MIND Diet</strong> (a hybrid of the Mediterranean and DASH diets). Emphasize green leafy vegetables, berries, nuts, olive oil, whole grains, and fish, while limiting red meat and sugar.</p>
+                    </div>
+                    <div class="precaution-box">
+                        <h4>😴 Sleep & Glymphatic Health</h4>
+                        <p>Target 7–8 hours of quality sleep daily. Deep sleep stimulates the brain's <strong>glymphatic system</strong>, which clears waste products—including toxic beta-amyloid proteins—from brain tissue.</p>
+                    </div>
+                    <div class="precaution-box">
+                        <h4>❤️ Cardiovascular Care</h4>
+                        <p>Rigorous management of blood pressure, blood glucose (HbA1c), cholesterol, and body weight. Cardiovascular health is directly linked to cerebral microvascular function.</p>
+                    </div>
+                    <div class="precaution-box">
+                        <h4>🩺 Longitudinal Monitoring</h4>
+                        <p>Establish annual neurocognitive assessments (using MMSE/MoCA tests) and follow-up biomarker evaluations. Review medications periodically to avoid drugs with anticholinergic side effects.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GLOSSARY OF CLINICAL TERMS -->
+            <div class="card glassmorphism animate-slide-left" style="margin-top: 2rem;">
+                <div class="card-header">
+                    <h2><span class="icon-span">📖</span> Medical Glossary & XAI Explainers</h2>
+                    <p>Definitions of blood-based biomarkers, cognitive metrics, and artificial intelligence parameters.</p>
+                </div>
+                <div class="glossary-list">
+                    <div class="glossary-item">
+                        <span class="glossary-term">Explainable AI (XAI) & SHAP</span>
+                        <span class="glossary-definition"><strong>Explainable AI</strong> refers to systems built to provide transparent, interpretable explanations for their decisions rather than being a "black box." <strong>SHAP (SHapley Additive exPlanations)</strong> values are based on cooperative game theory. They calculate the relative contribution of each biomarker to the final diagnosis. A positive SHAP value pushes the result toward Alzheimer's risk, while a negative SHAP value pulls the result toward the Cognitively Normal profile.</span>
+                    </div>
+                    <div class="glossary-item">
+                        <span class="glossary-term">p-tau217 & p-tau181 (Phosphorylated Tau)</span>
+                        <span class="glossary-definition">Blood-based biomarkers that reflect the phosphorylation and aggregation of tau proteins in the brain, which form neurofibrillary tangles. <strong>p-tau217</strong> has shown exceptional diagnostic accuracy, acting as a highly sensitive blood marker for Alzheimer's pathology.</span>
+                    </div>
+                    <div class="glossary-item">
+                        <span class="glossary-term">Aβ42/Aβ40 Ratio (Amyloid Beta)</span>
+                        <span class="glossary-definition">The ratio of amyloid-beta 42 to amyloid-beta 40 peptides in blood plasma. A decreased ratio suggests that amyloid-beta 42 is accumulating in the brain as amyloid plaques (a core neuropathological hallmark of Alzheimer's), leading to lower levels in circulating blood.</span>
+                    </div>
+                    <div class="glossary-item">
+                        <span class="glossary-term">NfL (Neurofilament Light Chain)</span>
+                        <span class="glossary-definition">A biomarker indicating general axonal damage and neurodegeneration. When neurons are injured or die, NfL is released into cerebrospinal fluid and spills over into blood. Elevated levels are found in Alzheimer's, ALS, multiple sclerosis, and trauma.</span>
+                    </div>
+                    <div class="glossary-item">
+                        <span class="glossary-term">GFAP (Glial Fibrillary Acidic Protein)</span>
+                        <span class="glossary-definition">A marker indicating reactive astrogliosis, which is astrocytic activation in response to brain injury or neuroinflammation. GFAP levels in blood rise significantly in the early stages of Alzheimer's Disease.</span>
+                    </div>
+                    <div class="glossary-item">
+                        <span class="glossary-term">MMSE (Mini-Mental State Exam)</span>
+                        <span class="glossary-definition">A widely used 30-point clinical questionnaire to evaluate cognitive impairment. It tests orientation, memory, attention, language, and visual-spatial skills. Scores above 25 represent normal function, 20–24 mild, 10–19 moderate, and below 10 severe impairment.</span>
+                    </div>
+                    <div class="glossary-item">
+                        <span class="glossary-term">MoCA (Montreal Cognitive Assessment)</span>
+                        <span class="glossary-definition">A 30-point cognitive screening tool designed to detect mild cognitive impairment (MCI). It evaluates executive functions, memory, attention, language, abstract reasoning, and orientation. It is generally more sensitive than MMSE for early cognitive changes.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <footer class="app-footer animate-fade-in">
             <p>Developed with AuraMind Glassmorphic Design Core. Real-time predictions map coefficients extracted from local standard classifiers. All metrics computed local-first.</p>
