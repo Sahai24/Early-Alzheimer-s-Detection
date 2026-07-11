@@ -102,5 +102,7 @@ python3 -m http.server 8000
 ## Author
 
 **Avanish Sahai** — MCA, School of Computer Applications, Dayananda Sagar University
+
 **Harsh CHaudhary** - MCA, School of Computer Applications, Dayananda Sagar University
+
 **Madhav P** - MCA, School of Computer Applications, Dayananda Sagar University
