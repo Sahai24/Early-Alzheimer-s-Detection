@@ -484,15 +484,8 @@ function setupThresholdControl() {
 let assessmentLogs = [];
 
 function setupLogRegistry() {
-    // Load from localStorage
-    const saved = localStorage.getItem('alz_diagnostic_logs');
-    if (saved) {
-        try {
-            assessmentLogs = JSON.parse(saved);
-        } catch (e) {
-            assessmentLogs = [];
-        }
-    }
+    // Fetch logs from the backend database on load
+    fetchLogsFromServer();
 
     const btnSave = document.getElementById('btn-save-log');
     const btnSaveConsole = document.getElementById('btn-save-log-console');
@@ -511,6 +504,23 @@ function setupLogRegistry() {
     if (btnExport) {
         btnExport.addEventListener('click', exportLogsToCSV);
     }
+}
+
+function fetchLogsFromServer() {
+    fetch('/api/logs')
+        .then(response => {
+            if (!response.ok) throw new Error('Database response error');
+            return response.json();
+        })
+        .then(data => {
+            assessmentLogs = data;
+            renderLogs();
+        })
+        .catch(err => {
+            console.error('Error fetching logs from database:', err);
+            assessmentLogs = [];
+            renderLogs();
+        });
 }
 
 function saveCurrentAssessmentLog() {
@@ -545,37 +555,53 @@ function saveCurrentAssessmentLog() {
         confidence: confidenceText
     };
 
-    assessmentLogs.unshift(logEntry); // Add to beginning
-    localStorage.setItem('alz_diagnostic_logs', JSON.stringify(assessmentLogs));
-    
-    renderLogs();
+    // Save to server database
+    fetch('/api/logs', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(logEntry)
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Failed to save to database');
+        return response.json();
+    })
+    .then(() => {
+        // Refresh logs from database
+        fetchLogsFromServer();
+        
+        // Show visual confirmation on the buttons
+        const btnSave = document.getElementById('btn-save-log');
+        if (btnSave) {
+            const originalText = btnSave.innerHTML;
+            btnSave.innerHTML = '✅ Saved to Database!';
+            btnSave.classList.add('text-accent');
+            setTimeout(() => {
+                btnSave.innerHTML = originalText;
+                btnSave.classList.remove('text-accent');
+            }, 1500);
+        }
 
-    // Show visual confirmation on the button
-    const btnSave = document.getElementById('btn-save-log');
-    if (btnSave) {
-        const originalText = btnSave.innerHTML;
-        btnSave.innerHTML = '✅ Saved to Registry!';
-        btnSave.classList.add('text-accent');
-        setTimeout(() => {
-            btnSave.innerHTML = originalText;
-            btnSave.classList.remove('text-accent');
-        }, 1500);
-    }
-
-    const btnSaveConsole = document.getElementById('btn-save-log-console');
-    if (btnSaveConsole) {
-        const originalText = btnSaveConsole.innerHTML;
-        btnSaveConsole.innerHTML = '✅ Assessment Saved to Logs!';
-        btnSaveConsole.style.background = 'rgba(16, 185, 129, 0.2)';
-        btnSaveConsole.style.borderColor = 'var(--healthy-color)';
-        btnSaveConsole.style.color = 'var(--healthy-color)';
-        setTimeout(() => {
-            btnSaveConsole.innerHTML = originalText;
-            btnSaveConsole.style.background = '';
-            btnSaveConsole.style.borderColor = '';
-            btnSaveConsole.style.color = '';
-        }, 1500);
-    }
+        const btnSaveConsole = document.getElementById('btn-save-log-console');
+        if (btnSaveConsole) {
+            const originalText = btnSaveConsole.innerHTML;
+            btnSaveConsole.innerHTML = '✅ Assessment Saved to Database!';
+            btnSaveConsole.style.background = 'rgba(16, 185, 129, 0.2)';
+            btnSaveConsole.style.borderColor = 'var(--healthy-color)';
+            btnSaveConsole.style.color = 'var(--healthy-color)';
+            setTimeout(() => {
+                btnSaveConsole.innerHTML = originalText;
+                btnSaveConsole.style.background = '';
+                btnSaveConsole.style.borderColor = '';
+                btnSaveConsole.style.color = '';
+            }, 1500);
+        }
+    })
+    .catch(err => {
+        console.error('Error saving log to database:', err);
+        alert('Error saving assessment to database. Please check connection.');
+    });
 }
 
 function renderLogs() {
@@ -618,10 +644,22 @@ function renderLogs() {
 }
 
 function clearLogs() {
-    if (confirm('Are you sure you want to clear your entire screening history?')) {
-        assessmentLogs = [];
-        localStorage.removeItem('alz_diagnostic_logs');
-        renderLogs();
+    if (confirm('Are you sure you want to clear your entire screening history from the database?')) {
+        fetch('/api/logs', {
+            method: 'DELETE'
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to clear database logs');
+            return response.json();
+        })
+        .then(() => {
+            assessmentLogs = [];
+            renderLogs();
+        })
+        .catch(err => {
+            console.error('Error clearing database logs:', err);
+            alert('Could not clear logs database. Please check connection.');
+        });
     }
 }
 
