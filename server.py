@@ -17,9 +17,6 @@ def init_db():
         CREATE TABLE IF NOT EXISTS diagnostic_logs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             timestamp TEXT NOT NULL,
-            age REAL NOT NULL,
-            mmse REAL NOT NULL,
-            moca REAL NOT NULL,
             ptau181 REAL NOT NULL,
             ptau217 REAL NOT NULL,
             ab42_ab40_ratio REAL NOT NULL,
@@ -48,9 +45,6 @@ def get_logs():
             logs.append({
                 'id': r['id'],
                 'timestamp': r['timestamp'],
-                'age': r['age'],
-                'mmse': r['mmse'],
-                'moca': r['moca'],
                 'ptau181': r['ptau181'],
                 'ptau217': r['ptau217'],
                 'ab42_ab40_ratio': r['ab42_ab40_ratio'],
@@ -75,14 +69,11 @@ def add_log():
         cursor = conn.cursor()
         cursor.execute('''
             INSERT INTO diagnostic_logs (
-                timestamp, age, mmse, moca, ptau181, ptau217, 
+                timestamp, ptau181, ptau217, 
                 ab42_ab40_ratio, nfl, gfap, threshold, diagnosis, confidence
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
             data.get('timestamp'),
-            data.get('age'),
-            data.get('mmse'),
-            data.get('moca'),
             data.get('ptau181'),
             data.get('ptau217'),
             data.get('ab42_ab40_ratio'),

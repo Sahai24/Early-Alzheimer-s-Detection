@@ -1,35 +1,29 @@
 // COGNITIVE & BIOMARKER MODEL COEFFICIENTS (From Logistic Regression on 10k Dataset)
 const MODEL_CONFIG = {
-    features: ['age', 'mmse', 'moca', 'ptau181_pgml', 'ptau217_pgml', 'ab42_ab40_ratio', 'nfl_pgml', 'gfap_pgml'],
+    features: ['ptau181_pgml', 'ptau217_pgml', 'ab42_ab40_ratio', 'nfl_pgml', 'gfap_pgml'],
     featureLabels: {
-        'age': 'Patient Age',
-        'mmse': 'MMSE Score',
-        'moca': 'MoCA Score',
         'ptau181_pgml': 'p-tau181',
         'ptau217_pgml': 'p-tau217',
         'ab42_ab40_ratio': 'Aβ42/40 Ratio',
         'nfl_pgml': 'NfL Level',
         'gfap_pgml': 'GFAP Level'
     },
-    mean: [69.8017, 25.2303, 22.8296, 3.1152, 0.3742, 0.0729, 23.2468, 175.8245],
-    scale: [8.5418, 4.5711, 5.6532, 1.6863, 0.2268, 0.0225, 12.1084, 78.4163],
-    intercept: [-3.0002, 6.5235, -3.5233],
+    mean: [3.1152, 0.3742, 0.0729, 23.2468, 175.8245],
+    scale: [1.6863, 0.2268, 0.0225, 12.1084, 78.4163],
+    intercept: [-1.707, 4.923, -3.216],
     coefs: [
         // Class 0: Cognitively Normal (CN)
-        [-0.8437, 3.763, 3.7232, -3.9919, -4.1603, 1.8312, -1.5705, -2.0837],
+        [-4.3439, -5.1361, 2.3464, -2.0113, -2.3511],
         // Class 1: Mild Cognitive Impairment (MCI)
-        [0.0288, -0.5976, -0.535, 0.6337, 0.5592, 0.2448, 0.22, 0.122],
+        [0.5182, 0.7301, 0.1096, 0.2128, 0.2233],
         // Class 2: Alzheimer's Disease (AD)
-        [0.8149, -3.1654, -3.1882, 3.3582, 3.6011, -2.076, 1.3506, 1.9617]
+        [3.8257, 4.406, -2.456, 1.7984, 2.1278]
     ]
 };
 
 // PRESET PROFILES
 const PRESETS = {
     healthy: {
-        age: 65,
-        mmse: 29,
-        moca: 28,
         ptau181_pgml: 1.8,
         ptau217_pgml: 0.15,
         ab42_ab40_ratio: 0.115,
@@ -37,9 +31,6 @@ const PRESETS = {
         gfap_pgml: 95
     },
     mci: {
-        age: 72,
-        mmse: 24,
-        moca: 21,
         ptau181_pgml: 4.2,
         ptau217_pgml: 0.52,
         ab42_ab40_ratio: 0.065,
@@ -47,9 +38,6 @@ const PRESETS = {
         gfap_pgml: 220
     },
     ad: {
-        age: 78,
-        mmse: 16,
-        moca: 14,
         ptau181_pgml: 7.8,
         ptau217_pgml: 0.98,
         ab42_ab40_ratio: 0.035,
@@ -139,7 +127,7 @@ function setupPresetButtons() {
                 // Toggle active class
                 document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
-                
+
                 // Load values
                 loadPreset(preset);
             });
@@ -166,7 +154,7 @@ function loadPreset(presetName) {
 let recalculationTimeout;
 function triggerRecalculation() {
     clearTimeout(recalculationTimeout);
-    
+
     // Show visual processing loader
     processingCard.style.display = 'block';
     resultsCard.classList.add('opacity-low');
@@ -183,7 +171,7 @@ function triggerRecalculation() {
                     resultsCard.classList.remove('opacity-low');
                     xaiCard.classList.remove('opacity-low');
                     insightsCard.classList.remove('opacity-low');
-                    
+
                     calculateDiagnostics();
                 });
             });
@@ -234,7 +222,7 @@ function calculateDiagnostics() {
     const thresholdSlider = document.getElementById('risk-threshold');
     const thresholdPercent = thresholdSlider ? parseFloat(thresholdSlider.value) : 50;
     const thresholdVal = thresholdPercent / 100;
-    
+
     // Update visual text indicator for threshold
     const thresholdValSpan = document.getElementById('threshold-val');
     if (thresholdValSpan) {
@@ -324,7 +312,7 @@ function calculateSHAP(predClass, scaledInputs) {
     contributions.forEach(contrib => {
         const label = MODEL_CONFIG.featureLabels[contrib.feature];
         const rawVal = contrib.val;
-        
+
         // Scale width to fit in layout (max 45% left or right of the zero-line)
         const percentWidth = maxVal > 0 ? (Math.abs(rawVal) / maxVal) * 40 : 0;
         const formattedVal = (rawVal > 0 ? '+' : '') + rawVal.toFixed(2);
@@ -345,7 +333,7 @@ function calculateSHAP(predClass, scaledInputs) {
         trackWrapper.appendChild(zeroLine);
 
         const bar = document.createElement('div');
-        
+
         if (rawVal >= 0) {
             bar.className = 'shap-bar positive';
             bar.style.left = '50%';
@@ -378,9 +366,9 @@ function generateInsights(predClass, inputs) {
 
     if (predClass === 0) {
         insightHtml = `
-            <p>The patient's biomarker values and cognitive tests match the <strong>Cognitively Normal (CN)</strong> profile. 
-            Both cognitive indicators (MMSE score of <strong>${inputs.mmse}</strong> and MoCA score of <strong>${inputs.moca}</strong>) are in the normal healthy range. 
-            Important plasma indicators show no structural amyloid abnormalities, and neurofilament light (NfL) levels are normal, suggesting low brain cell degeneration.</p>
+            <p>The patient's plasma biomarker values match the <strong>Cognitively Normal (CN)</strong> profile. 
+            Core plasma indicators show no structural amyloid abnormalities (Aβ42/40 ratio is normal), and phosphorylated tau (p-tau217/p-tau181) levels are within baseline limits. 
+            Neurofilament light (NfL) and GFAP levels are normal, suggesting no active axonal damage or neuroinflammation.</p>
             <div class="insights-highlight-box">
                 <strong>Standard Recommendation:</strong> Normal annual screenings and healthy dietary and cardiovascular maintenance.
             </div>
@@ -388,14 +376,14 @@ function generateInsights(predClass, inputs) {
     } else if (predClass === 1) {
         // High-risk elements for MCI
         let reasons = [];
-        if (inputs.mmse < 26 || inputs.moca < 24) {
-            reasons.push("mild cognitive test scoring (MMSE/MoCA)");
-        }
         if (inputs.ptau217_pgml > 0.4) {
             reasons.push("early elevated plasma p-tau217 indices");
         }
         if (inputs.ab42_ab40_ratio < 0.08) {
             reasons.push("a decreased Aβ42/40 ratio signifying early amyloid accumulation");
+        }
+        if (inputs.nfl_pgml > 28.0) {
+            reasons.push("moderate neurofilament light (NfL) elevations indicating early axonal injury");
         }
 
         const reasonsStr = reasons.length > 0 ? reasons.join(', accompanied by ') : 'moderately anomalous fluid biomarkers';
@@ -403,7 +391,7 @@ function generateInsights(predClass, inputs) {
         insightHtml = `
             <p>The system classifies this patient profile under <strong>Mild Cognitive Impairment (MCI)</strong>. 
             This is primarily driven by <strong>${reasonsStr}</strong>. 
-            While patient function remains largely intact, the underlying biophysical indicators suggest early stage neurodegenerative pathophysiology is active.</p>
+            The underlying biophysical indicators suggest early stage neurodegenerative pathophysiology is active.</p>
             <div class="insights-highlight-box" style="border-left-color: var(--mci-color);">
                 <strong>MCI Protocol:</strong> Referral to a specialist for neurocognitive assessment, MRI imaging, and regular longitudinal monitoring.
             </div>
@@ -420,7 +408,7 @@ function generateInsights(predClass, inputs) {
 
         insightHtml = `
             <p>The patient profile shows a strong alignment with **Alzheimer's Disease (AD) Risk**. 
-            The system indicates this is driven by **${bioStr}**, coupled with significant cognitive deficits (MMSE: <strong>${inputs.mmse}</strong>, MoCA: <strong>${inputs.moca}</strong>).</p>
+            The system indicates this is driven by **${bioStr}**, signifying advanced amyloid plaque deposition and severe neurofibrillary tau tangles.</p>
             <div class="insights-highlight-box" style="border-left-color: var(--ad-color);">
                 <strong>AD Protocol:</strong> Direct neurological consultation, CSF or PET scan imaging validation, and consideration for clinical management interventions.
             </div>
@@ -525,15 +513,12 @@ function fetchLogsFromServer() {
 
 function saveCurrentAssessmentLog() {
     // Collect current values
-    const age = parseFloat(document.getElementById('age').value);
-    const mmse = parseFloat(document.getElementById('mmse').value);
-    const moca = parseFloat(document.getElementById('moca').value);
     const ptau181 = parseFloat(document.getElementById('ptau181_pgml').value);
     const ptau217 = parseFloat(document.getElementById('ptau217_pgml').value);
     const ab42_ab40_ratio = parseFloat(document.getElementById('ab42_ab40_ratio').value);
     const nfl = parseFloat(document.getElementById('nfl_pgml').value);
     const gfap = parseFloat(document.getElementById('gfap_pgml').value);
-    
+
     const thresholdSlider = document.getElementById('risk-threshold');
     const threshold = thresholdSlider ? thresholdSlider.value : 50;
 
@@ -542,9 +527,6 @@ function saveCurrentAssessmentLog() {
 
     const logEntry = {
         timestamp: new Date().toLocaleString(),
-        age,
-        mmse,
-        moca,
         ptau181,
         ptau217,
         ab42_ab40_ratio,
@@ -563,45 +545,45 @@ function saveCurrentAssessmentLog() {
         },
         body: JSON.stringify(logEntry)
     })
-    .then(response => {
-        if (!response.ok) throw new Error('Failed to save to database');
-        return response.json();
-    })
-    .then(() => {
-        // Refresh logs from database
-        fetchLogsFromServer();
-        
-        // Show visual confirmation on the buttons
-        const btnSave = document.getElementById('btn-save-log');
-        if (btnSave) {
-            const originalText = btnSave.innerHTML;
-            btnSave.innerHTML = '✅ Saved to Database!';
-            btnSave.classList.add('text-accent');
-            setTimeout(() => {
-                btnSave.innerHTML = originalText;
-                btnSave.classList.remove('text-accent');
-            }, 1500);
-        }
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to save to database');
+            return response.json();
+        })
+        .then(() => {
+            // Refresh logs from database
+            fetchLogsFromServer();
 
-        const btnSaveConsole = document.getElementById('btn-save-log-console');
-        if (btnSaveConsole) {
-            const originalText = btnSaveConsole.innerHTML;
-            btnSaveConsole.innerHTML = '✅ Assessment Saved to Database!';
-            btnSaveConsole.style.background = 'rgba(16, 185, 129, 0.2)';
-            btnSaveConsole.style.borderColor = 'var(--healthy-color)';
-            btnSaveConsole.style.color = 'var(--healthy-color)';
-            setTimeout(() => {
-                btnSaveConsole.innerHTML = originalText;
-                btnSaveConsole.style.background = '';
-                btnSaveConsole.style.borderColor = '';
-                btnSaveConsole.style.color = '';
-            }, 1500);
-        }
-    })
-    .catch(err => {
-        console.error('Error saving log to database:', err);
-        alert('Error saving assessment to database. Please check connection.');
-    });
+            // Show visual confirmation on the buttons
+            const btnSave = document.getElementById('btn-save-log');
+            if (btnSave) {
+                const originalText = btnSave.innerHTML;
+                btnSave.innerHTML = '✅ Saved to Database!';
+                btnSave.classList.add('text-accent');
+                setTimeout(() => {
+                    btnSave.innerHTML = originalText;
+                    btnSave.classList.remove('text-accent');
+                }, 1500);
+            }
+
+            const btnSaveConsole = document.getElementById('btn-save-log-console');
+            if (btnSaveConsole) {
+                const originalText = btnSaveConsole.innerHTML;
+                btnSaveConsole.innerHTML = '✅ Assessment Saved to Database!';
+                btnSaveConsole.style.background = 'rgba(16, 185, 129, 0.2)';
+                btnSaveConsole.style.borderColor = 'var(--healthy-color)';
+                btnSaveConsole.style.color = 'var(--healthy-color)';
+                setTimeout(() => {
+                    btnSaveConsole.innerHTML = originalText;
+                    btnSaveConsole.style.background = '';
+                    btnSaveConsole.style.borderColor = '';
+                    btnSaveConsole.style.color = '';
+                }, 1500);
+            }
+        })
+        .catch(err => {
+            console.error('Error saving log to database:', err);
+            alert('Error saving assessment to database. Please check connection.');
+        });
 }
 
 function renderLogs() {
@@ -609,7 +591,7 @@ function renderLogs() {
     if (!tableBody) return;
 
     if (assessmentLogs.length === 0) {
-        tableBody.innerHTML = '<tr id="no-logs-row"><td colspan="12" class="text-center">No assessments saved. Perform a test and click "Save Diagnostic Run" to log it.</td></tr>';
+        tableBody.innerHTML = '<tr id="no-logs-row"><td colspan="9" class="text-center">No assessments saved. Perform a test and click "Save Diagnostic Run" to log it.</td></tr>';
         return;
     }
 
@@ -627,9 +609,6 @@ function renderLogs() {
 
         row.innerHTML = `
             <td>${log.timestamp}</td>
-            <td>${log.age} yrs</td>
-            <td>${log.mmse} pts</td>
-            <td>${log.moca} pts</td>
             <td>${log.ptau181 ? log.ptau181.toFixed(1) : '0.0'} pg/mL</td>
             <td>${log.ptau217.toFixed(2)} pg/mL</td>
             <td>${log.ab42_ab40_ratio.toFixed(3)}</td>
@@ -648,18 +627,18 @@ function clearLogs() {
         fetch('/api/logs', {
             method: 'DELETE'
         })
-        .then(response => {
-            if (!response.ok) throw new Error('Failed to clear database logs');
-            return response.json();
-        })
-        .then(() => {
-            assessmentLogs = [];
-            renderLogs();
-        })
-        .catch(err => {
-            console.error('Error clearing database logs:', err);
-            alert('Could not clear logs database. Please check connection.');
-        });
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to clear database logs');
+                return response.json();
+            })
+            .then(() => {
+                assessmentLogs = [];
+                renderLogs();
+            })
+            .catch(err => {
+                console.error('Error clearing database logs:', err);
+                alert('Could not clear logs database. Please check connection.');
+            });
     }
 }
 
@@ -670,15 +649,12 @@ function exportLogsToCSV() {
     }
 
     let csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += "Timestamp,Patient Age,MMSE Score,MoCA Score,p-tau181,p-tau217,Abeta42/40 Ratio,NfL Level,GFAP Level,Sensitivity Threshold,Predicted Diagnosis,Model Confidence\n";
+    csvContent += "Timestamp,p-tau181,p-tau217,Abeta42/40 Ratio,NfL Level,GFAP Level,Sensitivity Threshold,Predicted Diagnosis,Model Confidence\n";
 
     assessmentLogs.forEach(log => {
         const diag = `"${log.diagnosis.replace(/"/g, '""')}"`;
         const row = [
             `"${log.timestamp}"`,
-            log.age,
-            log.mmse,
-            log.moca,
             log.ptau181 || 0.0,
             log.ptau217,
             log.ab42_ab40_ratio,
@@ -714,11 +690,11 @@ function initCharts() {
         radarChartInstance = new Chart(radarCtx, {
             type: 'radar',
             data: {
-                labels: ['Patient Age', 'MMSE Score', 'MoCA Score', 'p-tau181', 'p-tau217', 'Aβ42/40 Ratio', 'NfL Level', 'GFAP Level'],
+                labels: ['p-tau181', 'p-tau217', 'Aβ42/40 Ratio', 'NfL Level', 'GFAP Level'],
                 datasets: [
                     {
                         label: 'Normal Clinical Baseline',
-                        data: [0.3, 0.1, 0.1, 0.15, 0.1, 0.15, 0.1, 0.1],
+                        data: [0.15, 0.1, 0.15, 0.1, 0.1],
                         borderColor: 'rgba(16, 185, 129, 0.4)',
                         backgroundColor: 'rgba(16, 185, 129, 0.04)',
                         borderWidth: 2,
@@ -726,7 +702,7 @@ function initCharts() {
                     },
                     {
                         label: 'MCI Clinical Baseline',
-                        data: [0.5, 0.45, 0.45, 0.4, 0.5, 0.45, 0.4, 0.4],
+                        data: [0.4, 0.5, 0.45, 0.4, 0.4],
                         borderColor: 'rgba(245, 158, 11, 0.4)',
                         backgroundColor: 'rgba(245, 158, 11, 0.04)',
                         borderWidth: 2,
@@ -734,7 +710,7 @@ function initCharts() {
                     },
                     {
                         label: 'Alzheimer\'s Baseline',
-                        data: [0.7, 0.85, 0.85, 0.85, 0.85, 0.8, 0.75, 0.75],
+                        data: [0.85, 0.85, 0.8, 0.75, 0.75],
                         borderColor: 'rgba(239, 68, 68, 0.4)',
                         backgroundColor: 'rgba(239, 68, 68, 0.04)',
                         borderWidth: 2,
@@ -742,7 +718,7 @@ function initCharts() {
                     },
                     {
                         label: 'Current Patient',
-                        data: [0, 0, 0, 0, 0, 0, 0, 0],
+                        data: [0, 0, 0, 0, 0],
                         borderColor: '#00f2fe',
                         backgroundColor: 'rgba(0, 242, 254, 0.25)',
                         borderWidth: 3,
@@ -782,19 +758,19 @@ function initCharts() {
     if (scatterCtx) {
         // Pre-bake reference cohort clusters
         const cnCluster = [
-            {x: 0.1, y: 0.12}, {x: 0.15, y: 0.10}, {x: 0.08, y: 0.14}, {x: 0.2, y: 0.11}, {x: 0.12, y: 0.13}, 
-            {x: 0.18, y: 0.095}, {x: 0.22, y: 0.115}, {x: 0.14, y: 0.125}, {x: 0.11, y: 0.135}, {x: 0.16, y: 0.105}, 
-            {x: 0.24, y: 0.09}, {x: 0.07, y: 0.15}, {x: 0.19, y: 0.122}, {x: 0.13, y: 0.118}, {x: 0.09, y: 0.138}
+            { x: 0.1, y: 0.12 }, { x: 0.15, y: 0.10 }, { x: 0.08, y: 0.14 }, { x: 0.2, y: 0.11 }, { x: 0.12, y: 0.13 },
+            { x: 0.18, y: 0.095 }, { x: 0.22, y: 0.115 }, { x: 0.14, y: 0.125 }, { x: 0.11, y: 0.135 }, { x: 0.16, y: 0.105 },
+            { x: 0.24, y: 0.09 }, { x: 0.07, y: 0.15 }, { x: 0.19, y: 0.122 }, { x: 0.13, y: 0.118 }, { x: 0.09, y: 0.138 }
         ];
         const mciCluster = [
-            {x: 0.35, y: 0.085}, {x: 0.42, y: 0.075}, {x: 0.5, y: 0.068}, {x: 0.38, y: 0.092}, {x: 0.48, y: 0.07}, 
-            {x: 0.55, y: 0.062}, {x: 0.32, y: 0.088}, {x: 0.45, y: 0.08}, {x: 0.52, y: 0.074}, {x: 0.4, y: 0.078},
-            {x: 0.36, y: 0.082}, {x: 0.44, y: 0.072}, {x: 0.49, y: 0.065}, {x: 0.58, y: 0.058}, {x: 0.31, y: 0.095}
+            { x: 0.35, y: 0.085 }, { x: 0.42, y: 0.075 }, { x: 0.5, y: 0.068 }, { x: 0.38, y: 0.092 }, { x: 0.48, y: 0.07 },
+            { x: 0.55, y: 0.062 }, { x: 0.32, y: 0.088 }, { x: 0.45, y: 0.08 }, { x: 0.52, y: 0.074 }, { x: 0.4, y: 0.078 },
+            { x: 0.36, y: 0.082 }, { x: 0.44, y: 0.072 }, { x: 0.49, y: 0.065 }, { x: 0.58, y: 0.058 }, { x: 0.31, y: 0.095 }
         ];
         const adCluster = [
-            {x: 0.8, y: 0.045}, {x: 0.95, y: 0.035}, {x: 1.1, y: 0.025}, {x: 0.75, y: 0.052}, {x: 0.88, y: 0.04}, 
-            {x: 1.05, y: 0.03}, {x: 1.2, y: 0.022}, {x: 0.7, y: 0.058}, {x: 0.85, y: 0.048}, {x: 1.0, y: 0.038},
-            {x: 0.83, y: 0.042}, {x: 0.92, y: 0.032}, {x: 1.15, y: 0.026}, {x: 1.3, y: 0.018}, {x: 0.78, y: 0.048}
+            { x: 0.8, y: 0.045 }, { x: 0.95, y: 0.035 }, { x: 1.1, y: 0.025 }, { x: 0.75, y: 0.052 }, { x: 0.88, y: 0.04 },
+            { x: 1.05, y: 0.03 }, { x: 1.2, y: 0.022 }, { x: 0.7, y: 0.058 }, { x: 0.85, y: 0.048 }, { x: 1.0, y: 0.038 },
+            { x: 0.83, y: 0.042 }, { x: 0.92, y: 0.032 }, { x: 1.15, y: 0.026 }, { x: 1.3, y: 0.018 }, { x: 0.78, y: 0.048 }
         ];
 
         scatterChartInstance = new Chart(scatterCtx, {
@@ -821,7 +797,7 @@ function initCharts() {
                     },
                     {
                         label: 'Current Patient',
-                        data: [{x: 0, y: 0}],
+                        data: [{ x: 0, y: 0 }],
                         backgroundColor: '#00f2fe',
                         borderColor: '#ffffff',
                         borderWidth: 2,
@@ -862,10 +838,10 @@ function initCharts() {
         importanceChartInstance = new Chart(importanceCtx, {
             type: 'bar',
             data: {
-                labels: ['Age', 'p-tau181', 'GFAP', 'NfL', 'MMSE', 'Aβ42/40', 'MoCA', 'p-tau217', 'CDR (Clinical staging)'],
+                labels: ['NfL Level', 'GFAP Level', 'Aβ42/40 Ratio', 'p-tau181', 'p-tau217'],
                 datasets: [{
                     label: 'Feature Importance Weight (%)',
-                    data: [1.5, 1.2, 1.8, 2.3, 3.2, 5.1, 8.1, 9.4, 67.4],
+                    data: [4.42, 4.70, 4.89, 39.59, 46.39],
                     backgroundColor: 'rgba(0, 242, 254, 0.3)',
                     borderColor: 'rgba(0, 242, 254, 0.7)',
                     borderWidth: 1.5,
@@ -898,16 +874,13 @@ function updateCharts(inputs, probabilities) {
     if (radarChartInstance) {
         // Scale each current patient input to a 0-1 range for the radar chart
         const patientScaled = [
-            minMaxScale('age', inputs.age),
-            minMaxScale('mmse', inputs.mmse),
-            minMaxScale('moca', inputs.moca),
             minMaxScale('ptau181_pgml', inputs.ptau181_pgml),
             minMaxScale('ptau217_pgml', inputs.ptau217_pgml),
             minMaxScale('ab42_ab40_ratio', inputs.ab42_ab40_ratio),
             minMaxScale('nfl_pgml', inputs.nfl_pgml),
             minMaxScale('gfap_pgml', inputs.gfap_pgml)
         ];
-        
+
         radarChartInstance.data.datasets[3].data = patientScaled;
         radarChartInstance.update();
     }
@@ -919,13 +892,13 @@ function updateCharts(inputs, probabilities) {
             x: inputs.ptau217_pgml,
             y: inputs.ab42_ab40_ratio
         }];
-        
+
         // Dynamically change dot outline color based on the predicted category
         let dotColor = 'var(--healthy-color)';
         const maxIndex = probabilities.indexOf(Math.max(...probabilities));
         if (maxIndex === 1) dotColor = 'var(--mci-color)';
         if (maxIndex === 2) dotColor = 'var(--ad-color)';
-        
+
         scatterChartInstance.data.datasets[3].backgroundColor = dotColor;
         scatterChartInstance.update();
     }
@@ -936,13 +909,11 @@ function minMaxScale(feature, val) {
     if (!slider) return 0;
     const min = parseFloat(slider.min);
     const max = parseFloat(slider.max);
-    
+
     let score;
-    // MMSE, MoCA, and Aβ42/40 ratio decrease with pathology.
-    // Invert them so a higher value on the radar chart means a worse/more abnormal state.
-    if (feature === 'mmse' || feature === 'moca') {
-        score = (max - val) / (max - min);
-    } else if (feature === 'ab42_ab40_ratio') {
+    // Aβ42/40 ratio decreases with pathology.
+    // Invert it so a higher value on the radar chart means a worse/more abnormal state.
+    if (feature === 'ab42_ab40_ratio') {
         score = (max - val) / (max - min);
     } else {
         score = (val - min) / (max - min);

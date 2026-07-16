@@ -233,9 +233,9 @@ body {
 /* GRID LAYOUT */
 .grid-layout {
     display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
+    grid-template-columns: 1fr 1fr;
     gap: 2.5rem;
-    align-items: start;
+    align-items: stretch;
 }
 
 @media (max-width: 968px) {
@@ -432,11 +432,18 @@ body {
     font-family: var(--font-secondary);
 }
 
-/* RIGHT COLUMN WRAPPER */
+/* LEFT & RIGHT COLUMN WRAPPERS */
+.left-column-container,
 .right-column-container {
     display: flex;
     flex-direction: column;
     gap: 2rem;
+    height: 100%;
+}
+
+.xai-card,
+.insights-card {
+    flex-grow: 1;
 }
 
 /* BACKGROUND LOADER/PROGRESS CARD (USER REQUESTED) */
