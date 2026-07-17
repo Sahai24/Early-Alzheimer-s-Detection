@@ -46,9 +46,10 @@ Early-Alzheimer-s-Detection/
 
 - **Algorithm:** `XGBClassifier` (`objective='multi:softprob'`, `num_class=3`, `eval_metric='mlogloss'`, `enable_categorical=True`)
 - **Split:** Stratified 80/20 train-test split (`random_state=42`)
-- **Test accuracy:** 99.85% (1,997 / 2,000 correctly classified), precision/recall/F1 ≈ 1.00 across all three classes
-
-**⚠️ Known limitation — target leakage:** Feature-importance analysis shows `cdr` (Clinical Dementia Rating) alone accounts for ~68% of the model's decision-making, followed by `ptau217_pgml` (~9%), `moca` (~8%), and `mmse` (~3%). Because CDR is itself a clinical staging score closely tied to the diagnosis label, this inflates the reported accuracy. A biomarker-only variant (excluding `cdr`/`moca`/`mmse`) is needed to get an honest read on how well blood biomarkers alone predict diagnosis — see [Future Work](#future-work).
+- **Test accuracy:**
+  - **XGBoost Classifier:** **97.45%** (precision/recall/F1 ≈ 0.97 across classes)
+  - **Logistic Regression baseline:** **97.60%** (precision/recall/F1 ≈ 0.98 across classes)
+- **Features Used:** The models are trained strictly on the **5 core blood biomarkers** (`ptau181_pgml`, `ptau217_pgml`, `ab42_ab40_ratio`, `nfl_pgml`, `gfap_pgml`), avoiding target leakage from clinical staging metrics (such as `cdr`, `moca`, or `mmse`).
 
 ## AuraMind — Interactive Demo UI
 
@@ -95,8 +96,7 @@ python server.py
 ## Future Work
 
 - Expose the trained XGBoost model via a lightweight REST API (e.g., FastAPI) so AuraMind calls the real model instead of a client-side approximation
-- Retrain on a biomarker-only feature set (excluding CDR/MoCA/MMSE) to measure genuine blood-biomarker predictive power
-- Benchmark against Logistic Regression, Random Forest, and deep-learning baselines with proper cross-validation and hyperparameter tuning
+- Benchmark against Random Forest and deep-learning baselines with proper cross-validation and hyperparameter tuning
 - Integrate true [SHAP](https://github.com/slundberg/shap) values instead of the current simplified client-side approximation
 - Validate against a real, ethically-sourced, de-identified clinical dataset
 
