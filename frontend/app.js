@@ -8,16 +8,16 @@ const MODEL_CONFIG = {
         'nfl_pgml': 'NfL Level',
         'gfap_pgml': 'GFAP Level'
     },
-    mean: [3.1152, 0.3742, 0.0729, 23.2468, 175.8245],
-    scale: [1.6863, 0.2268, 0.0225, 12.1084, 78.4163],
-    intercept: [-1.707, 4.923, -3.216],
+    mean: [3.1165, 0.3734, 0.0730, 23.1955, 175.5962],
+    scale: [1.6880, 0.2257, 0.0225, 12.0721, 78.0776],
+    intercept: [-1.6748, 4.9186, -3.2439],
     coefs: [
         // Class 0: Cognitively Normal (CN)
-        [-4.3439, -5.1361, 2.3464, -2.0113, -2.3511],
+        [-4.3432, -5.1167, 2.3452, -2.0057, -2.3417],
         // Class 1: Mild Cognitive Impairment (MCI)
-        [0.5182, 0.7301, 0.1096, 0.2128, 0.2233],
+        [0.5176, 0.7286, 0.1081, 0.2125, 0.2227],
         // Class 2: Alzheimer's Disease (AD)
-        [3.8257, 4.406, -2.456, 1.7984, 2.1278]
+        [3.8256, 4.3881, -2.4533, 1.7933, 2.1190]
     ]
 };
 
@@ -374,17 +374,10 @@ function generateInsights(predClass, inputs) {
             </div>
         `;
     } else if (predClass === 1) {
-        // High-risk elements for MCI
         let reasons = [];
-        if (inputs.ptau217_pgml > 0.4) {
-            reasons.push("early elevated plasma p-tau217 indices");
-        }
-        if (inputs.ab42_ab40_ratio < 0.08) {
-            reasons.push("a decreased Aβ42/40 ratio signifying early amyloid accumulation");
-        }
-        if (inputs.nfl_pgml > 28.0) {
-            reasons.push("moderate neurofilament light (NfL) elevations indicating early axonal injury");
-        }
+        if (inputs.ptau217_pgml > 0.4) reasons.push("early elevated plasma p-tau217 indices");
+        if (inputs.ab42_ab40_ratio < 0.08) reasons.push("a decreased Aβ42/40 ratio signifying early amyloid accumulation");
+        if (inputs.nfl_pgml > 28.0) reasons.push("moderate neurofilament light (NfL) elevations indicating early axonal injury");
 
         const reasonsStr = reasons.length > 0 ? reasons.join(', accompanied by ') : 'moderately anomalous fluid biomarkers';
 
@@ -397,7 +390,6 @@ function generateInsights(predClass, inputs) {
             </div>
         `;
     } else {
-        // High-risk elements for AD
         let biomarkersList = [];
         if (inputs.ptau217_pgml > 0.6) biomarkersList.push("highly elevated p-tau217");
         if (inputs.ab42_ab40_ratio < 0.06) biomarkersList.push("critical Aβ42/40 ratio depletion");
@@ -407,8 +399,8 @@ function generateInsights(predClass, inputs) {
         const bioStr = biomarkersList.length > 0 ? biomarkersList.join(', ') : 'highly abnormal biomarker values';
 
         insightHtml = `
-            <p>The patient profile shows a strong alignment with **Alzheimer's Disease (AD) Risk**. 
-            The system indicates this is driven by **${bioStr}**, signifying advanced amyloid plaque deposition and severe neurofibrillary tau tangles.</p>
+            <p>The patient profile shows a strong alignment with <strong>Alzheimer's Disease (AD) Risk</strong>. 
+            The system indicates this is driven by <strong>${bioStr}</strong>, signifying advanced amyloid plaque deposition and severe neurofibrillary tau tangles.</p>
             <div class="insights-highlight-box" style="border-left-color: var(--ad-color);">
                 <strong>AD Protocol:</strong> Direct neurological consultation, CSF or PET scan imaging validation, and consideration for clinical management interventions.
             </div>

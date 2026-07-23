@@ -70,115 +70,102 @@
         <!-- TAB PANEL: DIAGNOSTIC CONSOLE -->
         <div id="tab-console" class="tab-panel active">
             <main class="grid-layout">
-                <section class="left-column-container">
-                    <!-- INPUTS PANEL -->
-                    <div class="card glassmorphism inputs-panel animate-slide-left">
-                        <div class="card-header">
-                            <h2><span class="icon-span">🧪</span> Patient Biomarkers & Cognitive Profiles</h2>
-                            <p>Adjust variables below to calculate diagnostic probability and feature contributions.</p>
-                        </div>
+                <!-- ROW 1, COL 1: INPUTS PANEL -->
+                <div class="card glassmorphism inputs-panel animate-slide-left">
+                    <div class="card-header">
+                        <h2><span class="icon-span">🧪</span> Patient Biomarkers & Cognitive Profiles</h2>
+                        <p>Adjust variables below to calculate diagnostic probability and feature contributions.</p>
+                    </div>
 
-                        <form id="biomarker-form" onsubmit="event.preventDefault();">
+                    <form id="biomarker-form" onsubmit="event.preventDefault();">
 
-                            <!-- SECTION: CORE FLUID BIOMARKERS -->
-                            <div class="form-group-section">
-                                <h3>Blood & Plasma Biomarkers</h3>
+                        <!-- SECTION: CORE FLUID BIOMARKERS -->
+                        <div class="form-group-section">
+                            <h3>Blood & Plasma Biomarkers</h3>
 
-                                <!-- p-tau181 -->
-                                <div class="input-control">
-                                    <div class="input-label-row">
-                                        <label for="ptau181_pgml">Phosphorylated Tau 181 (p-tau181)</label>
-                                        <div class="value-display-group">
-                                            <input type="number" id="ptau181_pgml-num" min="0.5" max="9.5" step="0.1"
-                                                class="value-number">
-                                            <span class="unit">pg/mL</span>
-                                        </div>
-                                    </div>
-                                    <input type="range" id="ptau181_pgml" min="0.5" max="9.5" step="0.1"
-                                        class="custom-slider">
-                                    <div class="range-bounds"><span>0.5 pg/mL</span><span>9.5 pg/mL</span></div>
-                                </div>
-
-                                <!-- p-tau217 -->
-                                <div class="input-control">
-                                    <div class="input-label-row">
-                                        <label for="ptau217_pgml">Phosphorylated Tau 217 (p-tau217)</label>
-                                        <div class="value-display-group">
-                                            <input type="number" id="ptau217_pgml-num" min="0.05" max="1.35" step="0.01"
-                                                class="value-number">
-                                            <span class="unit">pg/mL</span>
-                                        </div>
-                                    </div>
-                                    <input type="range" id="ptau217_pgml" min="0.05" max="1.35" step="0.01"
-                                        class="custom-slider">
-                                    <div class="range-bounds"><span>0.05 pg/mL</span><span>1.35 pg/mL</span></div>
-                                </div>
-
-                                <!-- ab42_ab40_ratio -->
-                                <div class="input-control">
-                                    <div class="input-label-row">
-                                        <label for="ab42_ab40_ratio">Amyloid Beta 42/40 Ratio (Aβ42/40)</label>
-                                        <div class="value-display-group">
-                                            <input type="number" id="ab42_ab40_ratio-num" min="0.017" max="0.160"
-                                                step="0.001" class="value-number">
-                                            <span class="unit">ratio</span>
-                                        </div>
-                                    </div>
-                                    <input type="range" id="ab42_ab40_ratio" min="0.017" max="0.160" step="0.001"
-                                        class="custom-slider">
-                                    <div class="range-bounds"><span>0.017 (High Amyloid)</span><span>0.160 (Normal)</span>
+                            <!-- p-tau181 -->
+                            <div class="input-control">
+                                <div class="input-label-row">
+                                    <label for="ptau181_pgml">Phosphorylated Tau 181 (p-tau181)</label>
+                                    <div class="value-display-group">
+                                        <input type="number" id="ptau181_pgml-num" min="0.5" max="9.5" step="0.1"
+                                            class="value-number">
+                                        <span class="unit">pg/mL</span>
                                     </div>
                                 </div>
+                                <input type="range" id="ptau181_pgml" min="0.5" max="9.5" step="0.1"
+                                    class="custom-slider">
+                                <div class="range-bounds"><span>0.5 pg/mL</span><span>9.5 pg/mL</span></div>
+                            </div>
 
-                                <!-- nfl_pgml -->
-                                <div class="input-control">
-                                    <div class="input-label-row">
-                                        <label for="nfl_pgml">Neurofilament Light (NfL)</label>
-                                        <div class="value-display-group">
-                                            <input type="number" id="nfl_pgml-num" min="4.0" max="82.0" step="0.1"
-                                                class="value-number">
-                                            <span class="unit">pg/mL</span>
-                                        </div>
+                            <!-- p-tau217 -->
+                            <div class="input-control">
+                                <div class="input-label-row">
+                                    <label for="ptau217_pgml">Phosphorylated Tau 217 (p-tau217)</label>
+                                    <div class="value-display-group">
+                                        <input type="number" id="ptau217_pgml-num" min="0.05" max="1.35" step="0.01"
+                                            class="value-number">
+                                        <span class="unit">pg/mL</span>
                                     </div>
-                                    <input type="range" id="nfl_pgml" min="4.0" max="82.0" step="0.1" class="custom-slider">
-                                    <div class="range-bounds"><span>4.0 pg/mL</span><span>82.0 pg/mL</span></div>
                                 </div>
+                                <input type="range" id="ptau217_pgml" min="0.05" max="1.35" step="0.01"
+                                    class="custom-slider">
+                                <div class="range-bounds"><span>0.05 pg/mL</span><span>1.35 pg/mL</span></div>
+                            </div>
 
-                                <!-- gfap_pgml -->
-                                <div class="input-control">
-                                    <div class="input-label-row">
-                                        <label for="gfap_pgml">Glial Fibrillary Acidic Protein (GFAP)</label>
-                                        <div class="value-display-group">
-                                            <input type="number" id="gfap_pgml-num" min="40" max="535" step="1"
-                                                class="value-number">
-                                            <span class="unit">pg/mL</span>
-                                        </div>
+                            <!-- ab42_ab40_ratio -->
+                            <div class="input-control">
+                                <div class="input-label-row">
+                                    <label for="ab42_ab40_ratio">Amyloid Beta 42/40 Ratio (Aβ42/40)</label>
+                                    <div class="value-display-group">
+                                        <input type="number" id="ab42_ab40_ratio-num" min="0.017" max="0.160"
+                                            step="0.001" class="value-number">
+                                        <span class="unit">ratio</span>
                                     </div>
-                                    <input type="range" id="gfap_pgml" min="40" max="535" step="1" class="custom-slider">
-                                    <div class="range-bounds"><span>40 pg/mL</span><span>535 pg/mL</span></div>
+                                </div>
+                                <input type="range" id="ab42_ab40_ratio" min="0.017" max="0.160" step="0.001"
+                                    class="custom-slider">
+                                <div class="range-bounds"><span>0.017 (High Amyloid)</span><span>0.160
+                                        (Normal)</span>
                                 </div>
                             </div>
-                        </form>
-                    </div>
 
-                    <!-- EXPLAINABLE AI: FEATURE CONTRIBUTIONS (SHAP-STYLE) -->
-                    <div class="card glassmorphism xai-card animate-slide-left opacity-low" id="xai-card">
-                        <div class="card-header">
-                            <h2><span class="icon-span">📊</span> XAI Feature Attribution (SHAP-style)</h2>
-                            <p>Shows how much each biomarker pushed the classification towards Cognitive Normal (left,
-                                green) or Risk/AD (right, red) compared to average population values.</p>
+                            <!-- nfl_pgml -->
+                            <div class="input-control">
+                                <div class="input-label-row">
+                                    <label for="nfl_pgml">Neurofilament Light (NfL)</label>
+                                    <div class="value-display-group">
+                                        <input type="number" id="nfl_pgml-num" min="4.0" max="82.0" step="0.1"
+                                            class="value-number">
+                                        <span class="unit">pg/mL</span>
+                                    </div>
+                                </div>
+                                <input type="range" id="nfl_pgml" min="4.0" max="82.0" step="0.1"
+                                    class="custom-slider">
+                                <div class="range-bounds"><span>4.0 pg/mL</span><span>82.0 pg/mL</span></div>
+                            </div>
+
+                            <!-- gfap_pgml -->
+                            <div class="input-control">
+                                <div class="input-label-row">
+                                    <label for="gfap_pgml">Glial Fibrillary Acidic Protein (GFAP)</label>
+                                    <div class="value-display-group">
+                                        <input type="number" id="gfap_pgml-num" min="40" max="535" step="1"
+                                            class="value-number">
+                                        <span class="unit">pg/mL</span>
+                                    </div>
+                                </div>
+                                <input type="range" id="gfap_pgml" min="40" max="535" step="1"
+                                    class="custom-slider">
+                                <div class="range-bounds"><span>40 pg/mL</span><span>535 pg/mL</span></div>
+                            </div>
                         </div>
+                    </form>
+                </div>
 
-                        <!-- Live XAI Chart Container -->
-                        <div class="xai-chart-wrapper" id="xai-bars-container">
-                            <!-- Generated by JS -->
-                        </div>
-                    </div>
-                </section>
-
-                <!-- RESULTS & XAI PANEL -->
-                <section class="right-column-container">
-                    <!-- DIAGNOSTIC PROCESSING PROGRESS BAR (USER REQUESTED) -->
+                <!-- ROW 1, COL 2: MAIN DIAGNOSIS DISPLAY -->
+                <div class="right-top-container" style="display: flex; flex-direction: column; gap: 1.5rem; height: 100%;">
+                    <!-- DIAGNOSTIC PROCESSING PROGRESS BAR -->
                     <div class="card glassmorphism processing-card animate-fade-in" id="processing-card">
                         <div class="loader-header">
                             <span class="loader-indicator-spinner"></span>
@@ -192,8 +179,7 @@
                         </div>
                     </div>
 
-                    <!-- MAIN DIAGNOSIS DISPLAY -->
-                    <div class="card glassmorphism results-card animate-slide-right opacity-low" id="results-card">
+                    <div class="card glassmorphism results-card animate-slide-right opacity-low" id="results-card" style="flex-grow: 1;">
                         <div class="card-header">
                             <h2><span class="icon-span">🧠</span> Diagnostic Classification</h2>
                             <p>Computed live by multinomial diagnostic probabilities.</p>
@@ -264,17 +250,31 @@
                             </button>
                         </div>
                     </div>
+                </div>
 
-                    <!-- CLINICAL INSIGHTS CARD -->
-                    <div class="card glassmorphism insights-card animate-slide-right opacity-low" id="insights-card">
-                        <div class="card-header">
-                            <h2><span class="icon-span">🩺</span> Diagnostic Insights & Clinical Interpretation</h2>
-                        </div>
-                        <div class="insights-content" id="insights-text-container">
-                            Loading clinical interpretation profile...
-                        </div>
+                <!-- ROW 2, COL 1: EXPLAINABLE AI: FEATURE CONTRIBUTIONS (SHAP-STYLE) -->
+                <div class="card glassmorphism xai-card animate-slide-left opacity-low" id="xai-card">
+                    <div class="card-header">
+                        <h2><span class="icon-span">📊</span> XAI Feature Attribution (SHAP-style)</h2>
+                        <p>Shows how much each biomarker pushed the classification towards Cognitive Normal (left,
+                            green) or Risk/AD (right, red) compared to average population values.</p>
                     </div>
-                </section>
+
+                    <!-- Live XAI Chart Container -->
+                    <div class="xai-chart-wrapper" id="xai-bars-container">
+                        <!-- Generated by JS -->
+                    </div>
+                </div>
+
+                <!-- ROW 2, COL 2: CLINICAL INSIGHTS CARD -->
+                <div class="card glassmorphism insights-card animate-slide-right opacity-low" id="insights-card">
+                    <div class="card-header">
+                        <h2><span class="icon-span">🩺</span> Diagnostic Insights & Clinical Interpretation</h2>
+                    </div>
+                    <div class="insights-content" id="insights-text-container">
+                        Loading clinical interpretation profile...
+                    </div>
+                </div>
             </main>
         </div> <!-- Close #tab-console -->
 
@@ -351,11 +351,11 @@
                     </div>
                     <div class="metrics-dashboard-row">
                         <div class="metric-box">
-                            <span class="metric-val">99.85%</span>
+                            <span class="metric-val">97.45%</span>
                             <span class="metric-lbl">Test Accuracy</span>
                         </div>
                         <div class="metric-box">
-                            <span class="metric-val">~1.00</span>
+                            <span class="metric-val">~0.97</span>
                             <span class="metric-lbl">Precision / Recall</span>
                         </div>
                         <div class="confusion-matrix-wrapper">
@@ -372,21 +372,21 @@
                                 <tbody>
                                     <tr>
                                         <th>Actual CN</th>
-                                        <td class="match-cell">673</td>
-                                        <td>2</td>
+                                        <td class="match-cell">902</td>
+                                        <td>14</td>
                                         <td>0</td>
                                     </tr>
                                     <tr>
                                         <th>Actual MCI</th>
-                                        <td>1</td>
-                                        <td class="match-cell">631</td>
-                                        <td>0</td>
+                                        <td>20</td>
+                                        <td class="match-cell">572</td>
+                                        <td>9</td>
                                     </tr>
                                     <tr>
                                         <th>Actual AD</th>
                                         <td>0</td>
-                                        <td>0</td>
-                                        <td class="match-cell">693</td>
+                                        <td>8</td>
+                                        <td class="match-cell">475</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -473,7 +473,8 @@
                             <li><strong>Biomarkers as Objective Evidence:</strong> Core fluid biomarkers like
                                 <strong>p-tau217</strong>, <strong>Aβ42/40 ratio</strong>, <strong>NfL</strong>, and
                                 <strong>GFAP</strong> are critical. They change up to 20 years before symptoms emerge,
-                                allowing for definitive screening independent of demographics.</li>
+                                allowing for definitive screening independent of demographics.
+                            </li>
                         </ul>
                     </div>
                 </div>
